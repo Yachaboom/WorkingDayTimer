@@ -43,11 +43,8 @@ function CalcWorkTime() {
     var totalWorkTimeMin = totalWorkingDay * 8 * 60
     var remainWorkTimeMin = totalWorkTimeMin - curWorkTimeMin
 
-    if (remainWorkDay <= 0) {
-        return;
-    }
-
-    if (remainWorkTimeMin <= 0) {
+    if (remainWorkDay <= 0 || remainWorkTimeMin <= 0) {
+        title.innerText = "근태 현황 ( 필수 근무시간을 모두 소진했습니다 )"
         return;
     }
 
@@ -67,9 +64,33 @@ function CalcWorkTime() {
     var remainAvgTImeMin = parseInt(remainAvgTotalMin % 60)
 
     var infoData = "남은 근무 일수 : " + remainWorkDay + ", " + remainTimeStr + ", 평균 추천 근무시간 : " + remainAvgTimeHour + "시간 " + remainAvgTImeMin + "분";
-    title.innerText = "근태 현황 ( " + infoData + " )"; 
+    title.innerText = "근태 현황 ( " + infoData + " )";
 
-    console.log("남은 근무 일수 : " + remainWorkDay + ", " + remainTimeStr + ", 평균 추천 근무시간 : " + remainAvgTimeHour + "시간 " + remainAvgTImeMin + "분");
+    var InTimeInfo = hrPage.getElementsByClassName("check-in-status tx-20 tx-bold text-center");
+    if (InTimeInfo.length <= 0)
+    {
+        return;
+    }
+    var InTimeElement = InTimeInfo[0];
+
+    var OutTimeInfo = hrPage.getElementsByClassName("check-out-status tx-20 tx-bold text-center");
+    if (OutTimeInfo.length <= 0)
+    {
+        return;
+    }
+    var OutTimeElement = OutTimeInfo[0];
+
+    if (InTimeElement.innerText != "-" && OutTimeElement.innerText == "-")
+    {
+        var InTimeDetailInfo = InTimeElement.innerText.split(":");
+        var curTimeTotalMin = Number(InTimeDetailInfo[0]) * 60 + Number(InTimeDetailInfo[1]);
+        var recommendOutTimeTotalMin = curTimeTotalMin + remainAvgTotalMin;
+        var recommendOutTimeHour = parseInt(recommendOutTimeTotalMin / 60);
+        var recommendOutTimeMin = parseInt(recommendOutTimeTotalMin % 60);
+
+        var timeInfoText = hrPage.getElementsByClassName("text-opacity tx-12  text-center text-uppercase")[1];
+        timeInfoText.innerText = "추천 퇴근 시간 : " + recommendOutTimeHour + "시 " + recommendOutTimeMin + "분";
+    }
 }
 
 function CheckLoadedHrPageNeedElements(hrPage) {
