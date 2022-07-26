@@ -85,7 +85,7 @@ function CalcWorkTime() {
         var InTimeDetailInfo = InTimeElement.innerText.split(":");
         var curTimeTotalMin = Number(InTimeDetailInfo[0]) * 60 + Number(InTimeDetailInfo[1]);
         var recommendOutTimeTotalMin = curTimeTotalMin + remainAvgTotalMin;
-        var recommendOutTimeHour = parseInt(recommendOutTimeTotalMin / 60);
+        var recommendOutTimeHour = parseInt(recommendOutTimeTotalMin / 60) + 1 /* 휴게시간 */;
         var recommendOutTimeMin = parseInt(recommendOutTimeTotalMin % 60);
 
         var timeInfoText = hrPage.getElementsByClassName("text-opacity tx-12  text-center text-uppercase")[1];
