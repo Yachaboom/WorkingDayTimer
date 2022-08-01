@@ -32,19 +32,37 @@ function CalcWorkTime() {
     var workTimeInfo = workTime.split(' ');
 
     var curWorkTimeMin = Number("0");
-    if (workTimeInfo.length == 1)
-    {
+    if (workTimeInfo.length == 1) {
         curWorkTimeMin = Number(workTimeInfo[0].replace(regex, ""));
     }
-    else if (workTimeInfo.length == 2)
-    {
+    else if (workTimeInfo.length == 2) {
         curWorkTimeMin = Number(workTimeInfo[0].replace(regex, "")) * 60 + Number(workTimeInfo[1].replace(regex, ""));
     }
-    
+
     var today = new Date();
     var totalDays = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+
+    var curMonthHoliday = 0;
+    var curMonth = today.getMonth() + 1;
+    console.log("Current Month is " + curMonth);
+    if (curMonth == 8) {
+        curMonthHoliday = 1;
+    }
+    else if (curMonth == 9) {
+        curMonthHoliday = 2;
+    }
+    else if (curMonth == 10) {
+        curMonthHoliday = 2;
+    }
+    else if (curMonth == 11) {
+        curMonthHoliday = 0;
+    }
+    else if (curMonth == 12) {
+        curMonthHoliday = 0;
+    }
+
     var dayOffInfo = hrPage.getElementsByClassName("tx-15 day-off-color report-event-value");
-    var dayOffNum = Number(dayOffInfo[0].innerText.replace(regex, "")) + Number(dayOffInfo[1].innerText.replace(regex, "")) + Number(dayOffInfo[2].innerText.replace(regex, ""))
+    var dayOffNum = Number(dayOffInfo[0].innerText.replace(regex, "")) + Number(dayOffInfo[1].innerText.replace(regex, "")) + Number(dayOffInfo[2].innerText.replace(regex, "")) + curMonthHoliday;
     var totalWorkingDay = totalDays - dayOffNum
     var workStatusInfo = hrPage.getElementsByClassName("text-center tx-semibold tx-20 ");
     var workOutCount = Number(workStatusInfo[3].innerText.replace(regex, ""));
@@ -76,21 +94,18 @@ function CalcWorkTime() {
     title.innerText = "근태 현황 ( " + infoData + " )";
 
     var InTimeInfo = hrPage.getElementsByClassName("check-in-status tx-20 tx-bold text-center");
-    if (InTimeInfo.length <= 0)
-    {
+    if (InTimeInfo.length <= 0) {
         return;
     }
     var InTimeElement = InTimeInfo[0];
 
     var OutTimeInfo = hrPage.getElementsByClassName("check-out-status tx-20 tx-bold text-center");
-    if (OutTimeInfo.length <= 0)
-    {
+    if (OutTimeInfo.length <= 0) {
         return;
     }
     var OutTimeElement = OutTimeInfo[0];
 
-    if (InTimeElement.innerText != "-" && OutTimeElement.innerText == "-")
-    {
+    if (InTimeElement.innerText != "-" && OutTimeElement.innerText == "-") {
         var InTimeDetailInfo = InTimeElement.innerText.split(":");
         var curTimeTotalMin = Number(InTimeDetailInfo[0]) * 60 + Number(InTimeDetailInfo[1]);
         var recommendOutTimeTotalMin = curTimeTotalMin + remainAvgTotalMin;
