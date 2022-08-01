@@ -28,9 +28,28 @@ function CalcWorkTime() {
     }
 
     var workTime = hrPage.getElementsByClassName("tx-15 work-hours-color report-event-value")[0].innerText
-    var regex = /[^0-9]/g
-    var workTimeInfo = workTime.split(' ')
-    var curWorkTimeMin = Number(workTimeInfo[0].replace(regex, "")) * 60 + Number(workTimeInfo[1].replace(regex, ""))
+    var regex = /[^0-9]/g;
+    var workTimeInfo = workTime.split(' ');
+
+    var curWorkTimeMin = Number("0");
+    if (workTimeInfo.length == 1)
+    {
+        curWorkTimeMin = Number(workTimeInfo[0].replace(regex, ""));
+    }
+    else if (workTimeInfo.length == 2)
+    {
+        curWorkTimeMin = Number(workTimeInfo[0].replace(regex, "")) * 60 + Number(workTimeInfo[1].replace(regex, ""));
+    }
+    else
+    {
+        return;
+    }
+
+    if (curWorkTimeMin <= 0)
+    {
+        title.innerText = "근태 현황 ( 필수 근무시간을 모두 소진했거나 첫날 입니다. )"
+        return;
+    }
 
     var today = new Date();
     var totalDays = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
