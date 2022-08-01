@@ -40,17 +40,7 @@ function CalcWorkTime() {
     {
         curWorkTimeMin = Number(workTimeInfo[0].replace(regex, "")) * 60 + Number(workTimeInfo[1].replace(regex, ""));
     }
-    else
-    {
-        return;
-    }
-
-    if (curWorkTimeMin <= 0)
-    {
-        title.innerText = "근태 현황 ( 필수 근무시간을 모두 소진했거나 첫날 입니다. )"
-        return;
-    }
-
+    
     var today = new Date();
     var totalDays = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
     var dayOffInfo = hrPage.getElementsByClassName("tx-15 day-off-color report-event-value");
