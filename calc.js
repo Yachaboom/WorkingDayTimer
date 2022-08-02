@@ -44,7 +44,7 @@ function CalcWorkTime() {
 
     var curMonthHoliday = 0;
     var curMonth = today.getMonth() + 1;
-    console.log("Current Month is " + curMonth);
+    
     if (curMonth == 8) {
         curMonthHoliday = 1;
     }
@@ -62,10 +62,10 @@ function CalcWorkTime() {
     }
 
     var dayOffInfo = hrPage.getElementsByClassName("tx-15 day-off-color report-event-value");
-    var dayOffNum = Number(dayOffInfo[0].innerText.replace(regex, "")) + Number(dayOffInfo[1].innerText.replace(regex, "")) + Number(dayOffInfo[2].innerText.replace(regex, "")) + curMonthHoliday;
+    var dayOffNum = parseFloat(dayOffInfo[0].innerText) + parseFloat(dayOffInfo[1].innerText) + parseFloat(dayOffInfo[2].innerText) + curMonthHoliday;
     var totalWorkingDay = totalDays - dayOffNum
     var workStatusInfo = hrPage.getElementsByClassName("text-center tx-semibold tx-20 ");
-    var workOutCount = Number(workStatusInfo[3].innerText.replace(regex, ""));
+    var workOutCount = parseFloat(workStatusInfo[3].innerText);
     var remainWorkDay = totalWorkingDay - workOutCount;
     var totalWorkTimeMin = totalWorkingDay * 8 * 60
     var remainWorkTimeMin = totalWorkTimeMin - curWorkTimeMin
