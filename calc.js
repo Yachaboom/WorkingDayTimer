@@ -66,7 +66,7 @@ function CalcWorkTime() {
     var totalWorkingDay = totalDays - dayOffNum
     var workStatusInfo = hrPage.getElementsByClassName("text-center tx-semibold tx-20 ");
     var workOutCount = parseFloat(workStatusInfo[3].innerText);
-    var remainWorkDay = totalWorkingDay - workOutCount;
+    var remainWorkDay = Math.round(totalWorkingDay - workOutCount);
     var totalWorkTimeMin = totalWorkingDay * 8 * 60
     var remainWorkTimeMin = totalWorkTimeMin - curWorkTimeMin
 
