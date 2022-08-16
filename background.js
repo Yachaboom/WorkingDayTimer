@@ -1,6 +1,6 @@
 function UpdateWorkTimer(tab) {
-    if (tab.url == "http://bom-bus.hanbiro.net/nhr/hr/timecard/dashboard?mode=user" || tab.url == "http://bom-bus.hanbiro.net/ngw/app/#/nhr") {
-        chrome.scripting.executeScript({
+    if (tab.url == "https://bom-bus.hanbiro.net/nhr/hr/timecard/dashboard?mode=user" || tab.url == "https://bom-bus.hanbiro.net/ngw/app/#/nhr") {
+    chrome.scripting.executeScript({
             target: {
                 tabId: tab.id
             },
