@@ -55,7 +55,7 @@ function CalcWorkTime() {
         curMonthHoliday = 2;
     }
     else if (curMonth == 11) {
-        curMonthHoliday = 0;
+        curMonthHoliday = 1;
     }
     else if (curMonth == 12) {
         curMonthHoliday = 0;
