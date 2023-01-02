@@ -45,7 +45,28 @@ function CalcWorkTime() {
     var curMonthHoliday = 0;
     var curMonth = today.getMonth() + 1;
     
-    if (curMonth == 8) {
+    if (curMonth == 1) {
+        curMonthHoliday = 2;
+    }
+    else if (curMonth == 2) {
+        curMonthHoliday = 0;
+    }
+    else if (curMonth == 3) {
+        curMonthHoliday = 1;
+    }
+    else if (curMonth == 4) {
+        curMonthHoliday = 0;
+    }
+    else if (curMonth == 5) {
+        curMonthHoliday = 2;
+    }
+    else if (curMonth == 6) {
+        curMonthHoliday = 1;
+    }
+    else if (curMonth == 7) {
+        curMonthHoliday = 0;
+    }
+    else if (curMonth == 8) {
         curMonthHoliday = 1;
     }
     else if (curMonth == 9) {
@@ -55,10 +76,10 @@ function CalcWorkTime() {
         curMonthHoliday = 2;
     }
     else if (curMonth == 11) {
-        curMonthHoliday = 1;
+        curMonthHoliday = 0;
     }
     else if (curMonth == 12) {
-        curMonthHoliday = 0;
+        curMonthHoliday = 1;
     }
 
     var dayOffInfo = hrPage.getElementsByClassName("tx-15 day-off-color report-event-value");
