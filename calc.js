@@ -33,7 +33,13 @@ function CalcWorkTime() {
 
     var curWorkTimeMin = Number("0");
     if (workTimeInfo.length == 1) {
-        curWorkTimeMin = Number(workTimeInfo[0].replace(regex, ""));
+        var workTimeInfoStr = workTimeInfo[0];
+        if (workTimeInfoStr.includes("시간")) {
+            curWorkTimeMin = Number(workTimeInfo[0].replace(regex, ""))  * 60;
+        }
+        else {
+            curWorkTimeMin = Number(workTimeInfo[0].replace(regex, ""));
+        }
     }
     else if (workTimeInfo.length == 2) {
         curWorkTimeMin = Number(workTimeInfo[0].replace(regex, "")) * 60 + Number(workTimeInfo[1].replace(regex, ""));
@@ -44,7 +50,7 @@ function CalcWorkTime() {
 
     var curMonthHoliday = 0;
     var curMonth = today.getMonth() + 1;
-    
+
     if (curMonth == 1) {
         curMonthHoliday = 2;
     }
