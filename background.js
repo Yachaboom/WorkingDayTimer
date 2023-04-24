@@ -1,5 +1,9 @@
 function UpdateWorkTimer(tab) {
-    if (tab.url == "https://bom-bus.hanbiro.net/nhr/hr/timecard/dashboard?mode=user" || tab.url == "https://bom-bus.hanbiro.net/ngw/app/#/nhr") {
+    console.log("yachaboom1")
+    if (tab.url == "https://gwa.oneunivrs.com/gw/userMain.do") {
+
+    
+
     chrome.scripting.executeScript({
             target: {
                 tabId: tab.id
@@ -14,7 +18,15 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
 });
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    console.log(changeInfo.status)
     if (changeInfo.status == "complete") {
         chrome.tabs.get(tabId, UpdateWorkTimer)
     }
 })
+
+// background.js
+
+
+
+
+  

@@ -1,4 +1,5 @@
-TryCalcWorkTime()
+fetchAndParseHTML("https://gwa.oneunivrs.com/yjmgames/ft/ftCalendarForm")
+//TryCalcWorkTime()
 
 function CalcWorkTime() {
     let hrPage = document
@@ -172,25 +173,20 @@ function CheckLoadedHrPageNeedElements(hrPage) {
     return true;
 }
 
+async function fetchAndParseHTML(url) {
+    const response = await fetch(url);
+    const text = await response.text();
+    const parser = new DOMParser();
+    const htmlDocument = parser.parseFromString(text, "text/html");
+  
+    // Extract the information you need from the htmlDocument
+    const data = htmlDocument.querySelector('.left_div').textContent;
+    console.log(data)
+  }
+
 function TryCalcWorkTime() {
     var id = setInterval(function () {
-
-        var title = document.getElementById('divMenu');
-        var hrPageElement = document.getElementById("nhrIframe");
-        if (title != null) {
-            if (CheckLoadedHrPageNeedElements(document)) {
-                CalcWorkTime();
-                clearInterval(id);
-            }
-        } else if (hrPageElement != null) {
-            var hrPage = hrPageElement.contentDocument;
-            if (hrPage != null) {
-                if (CheckLoadedHrPageNeedElements(hrPage)) {
-                    CalcWorkTime();
-                    clearInterval(id);
-                }
-            }
-
-        }
-    }, 500);
+        fetchAndParseHTML("https://gwa.oneunivrs.com/yjmgames/ft/ftCalendarForm")
+        
+    }, 1500);
 }
