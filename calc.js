@@ -1,192 +1,266 @@
-fetchAndParseHTML("https://gwa.oneunivrs.com/yjmgames/ft/ftCalendarForm")
-//TryCalcWorkTime()
 
-function CalcWorkTime() {
-    let hrPage = document
-    let titleParent = document.getElementById('divMenu')
-    if (titleParent == null) {
-        hrPage = document.getElementById("nhrIframe").contentDocument
-        if (hrPage == null) {
-            return
-        }
 
-        titleParent = hrPage.getElementById('divMenu')
-    }
+main();
 
-    if (titleParent == null) {
-        return;
-    }
-    let titleList = titleParent.getElementsByClassName("text-truncate");
-    if (titleList == null || titleList.length == 0) {
-        return;
-    }
+/*async function tryLoadCalendarInfo() {
+    const calendarPageURL = "https://gwa.oneunivrs.com/yjmgames/ft/ftCalendarForm";
 
-    let title = titleList[0];
+    try {
+        const response = await fetch(calendarPageURL);
+        const text = await response.text();
+        const parser = new DOMParser();
+        const htmlDocument = parser.parseFromString(text, "text/html");
+        return htmlDocument;
 
-    let titleAttribute = title.getAttribute("data-lang-id")
-    if (titleAttribute != 'tc_menu_dashboard') {
-        return;
+    } catch (error) {
+        console.error("[WorkingDatTimerError] Calendar Info Load Fail");
+        return document.implementation.createHTMLDocument('');
     }
+}*/
 
-    var workTime = hrPage.getElementsByClassName("tx-15 work-hours-color report-event-value")[0].innerText
-    var regex = /[^0-9]/g;
-    var workTimeInfo = workTime.split(' ');
-
-    var curWorkTimeMin = Number("0");
-    if (workTimeInfo.length == 1) {
-        var workTimeInfoStr = workTimeInfo[0];
-        if (workTimeInfoStr.includes("시간")) {
-            curWorkTimeMin = Number(workTimeInfo[0].replace(regex, ""))  * 60;
-        }
-        else {
-            curWorkTimeMin = Number(workTimeInfo[0].replace(regex, ""));
-        }
-    }
-    else if (workTimeInfo.length == 2) {
-        curWorkTimeMin = Number(workTimeInfo[0].replace(regex, "")) * 60 + Number(workTimeInfo[1].replace(regex, ""));
-    }
-
-    var today = new Date();
-    var totalDays = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
-
-    var curMonthHoliday = 0;
-    var curMonth = today.getMonth() + 1;
-
-    if (curMonth == 1) {
-        curMonthHoliday = 2;
-    }
-    else if (curMonth == 2) {
-        curMonthHoliday = 0;
-    }
-    else if (curMonth == 3) {
-        curMonthHoliday = 1;
-    }
-    else if (curMonth == 4) {
-        curMonthHoliday = 0;
-    }
-    else if (curMonth == 5) {
-        curMonthHoliday = 2;
-    }
-    else if (curMonth == 6) {
-        curMonthHoliday = 1;
-    }
-    else if (curMonth == 7) {
-        curMonthHoliday = 0;
-    }
-    else if (curMonth == 8) {
-        curMonthHoliday = 1;
-    }
-    else if (curMonth == 9) {
-        curMonthHoliday = 2;
-    }
-    else if (curMonth == 10) {
-        curMonthHoliday = 2;
-    }
-    else if (curMonth == 11) {
-        curMonthHoliday = 0;
-    }
-    else if (curMonth == 12) {
-        curMonthHoliday = 1;
-    }
-
-    var dayOffInfo = hrPage.getElementsByClassName("tx-15 day-off-color report-event-value");
-    var dayOffNum = parseFloat(dayOffInfo[0].innerText) + parseFloat(dayOffInfo[1].innerText) + parseFloat(dayOffInfo[2].innerText) + curMonthHoliday;
-    var totalWorkingDay = totalDays - dayOffNum
-    var workStatusInfo = hrPage.getElementsByClassName("text-center tx-semibold tx-20 ");
-    var workOutCount = parseFloat(workStatusInfo[3].innerText);
-    var remainWorkDay = Math.round(totalWorkingDay - workOutCount);
-    var totalWorkTimeMin = totalWorkingDay * 8 * 60
-    var remainWorkTimeMin = totalWorkTimeMin - curWorkTimeMin
-
-    if (remainWorkDay <= 0 || remainWorkTimeMin <= 0) {
-        title.innerText = "근태 현황 ( 필수 근무시간을 모두 소진했습니다 )"
-        return;
-    }
-
-    var remainTimeHour = parseInt(remainWorkTimeMin / 60)
-    var remainTimeMin = parseInt(remainWorkTimeMin % 60)
-    var remainTimeStr = "남은 근무 시간 : "
-    if (remainTimeHour > 0 && remainTimeMin > 0) {
-        remainTimeStr = remainTimeStr + remainTimeHour + "시간 " + remainTimeMin + "분"
-    } else if (remainTimeHour == 0) {
-        remainTimeStr = remainTimeMin + "분"
-    } else if (remainTimeMin == 0) {
-        remainTimeStr = remainTimeHour + "시간"
-    }
-
-    var remainAvgTotalMin = remainWorkTimeMin / remainWorkDay
-    var remainAvgTimeHour = parseInt(remainAvgTotalMin / 60)
-    var remainAvgTImeMin = parseInt(remainAvgTotalMin % 60)
-
-    var infoData = "남은 근무 일수 : " + remainWorkDay + ", " + remainTimeStr + ", 평균 추천 근무시간 : " + remainAvgTimeHour + "시간 " + remainAvgTImeMin + "분";
-    title.innerText = "근태 현황 ( " + infoData + " )";
-
-    var InTimeInfo = hrPage.getElementsByClassName("check-in-status tx-20 tx-bold text-center");
-    if (InTimeInfo.length <= 0) {
-        return;
-    }
-    var InTimeElement = InTimeInfo[0];
-
-    var OutTimeInfo = hrPage.getElementsByClassName("check-out-status tx-20 tx-bold text-center");
-    if (OutTimeInfo.length <= 0) {
-        return;
-    }
-    var OutTimeElement = OutTimeInfo[0];
-
-    if (InTimeElement.innerText != "-" && OutTimeElement.innerText == "-") {
-        var InTimeDetailInfo = InTimeElement.innerText.split(":");
-        var curTimeTotalMin = Number(InTimeDetailInfo[0]) * 60 + Number(InTimeDetailInfo[1]);
-        var recommendOutTimeTotalMin = curTimeTotalMin + remainAvgTotalMin;
-        var recommendOutTimeHour = parseInt(recommendOutTimeTotalMin / 60) + 1 /* 휴게시간 */;
-        var recommendOutTimeMin = parseInt(recommendOutTimeTotalMin % 60);
-
-        var timeInfoText = hrPage.getElementsByClassName("text-opacity tx-12  text-center text-uppercase")[1];
-        timeInfoText.innerText = "추천 퇴근 시간 : " + recommendOutTimeHour + "시 " + recommendOutTimeMin + "분";
-    }
-}
-
-function CheckLoadedHrPageNeedElements(hrPage) {
-    if (hrPage == null) {
-        return false;
-    }
-
-    var title = hrPage.getElementById('divMenu');
-    if (title == null) {
-        return false;
-    }
-
-    var workTimeElements = hrPage.getElementsByClassName("tx-15 work-hours-color report-event-value")
-    if (workTimeElements == null || workTimeElements.length == 0) {
-        return false;
-    }
-
-    var dayOffElements = hrPage.getElementsByClassName("tx-15 day-off-color report-event-value")
-    if (dayOffElements == null || dayOffElements.length == 0) {
-        return false;
-    }
-
-    var timeElements = hrPage.getElementsByClassName("text-center tx-semibold tx-20 ")
-    if (timeElements == null || timeElements.length == 0) {
-        return false;
-    }
-
-    return true;
-}
-
-async function fetchAndParseHTML(url) {
-    const response = await fetch(url);
-    const text = await response.text();
+function calcWorkTime(data) {
     const parser = new DOMParser();
-    const htmlDocument = parser.parseFromString(text, "text/html");
-  
-    // Extract the information you need from the htmlDocument
-    const data = htmlDocument.querySelector('.left_div').textContent;
-    console.log(data)
-  }
-
-function TryCalcWorkTime() {
-    var id = setInterval(function () {
-        fetchAndParseHTML("https://gwa.oneunivrs.com/yjmgames/ft/ftCalendarForm")
-        
-    }, 1500);
+    const dataDoc = parser.parseFromString(data, "text/html");
+    
+    const totalWorkRequest = getWorkingDaysInCurrentMonth() * 8 * 60;
+    const totalWorkMinute = getTotalWorkingMinuteInCurrentMonth(dataDoc);
+    const totalVacationMinute = getTotalVacationMinuteInCurrentMonth(dataDoc);
+    const remainWorkMinute = totalWorkRequest - totalVacationMinute - totalWorkMinute;
+    const remainWorkingDay = getRemainWorkingday(dataDoc);
+    
+    
+    console.log('totalWorkRequest %d', totalWorkRequest);
+    console.log('totalWorkMinute %d', totalWorkMinute);
+    console.log('totalVacationMinute %d', totalVacationMinute);
+    console.log('remainWorkMinute %d', remainWorkMinute);
+    console.log('remainWorkingDay %d', remainWorkingDay);
 }
+
+function getWorkingDaysInCurrentMonth() {
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth();
+    const currentYear = currentDate.getFullYear();
+    const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
+    const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
+
+    const holidays = [
+        // 고정 공휴일(양력 기준)
+        new Date(currentYear, 0, 1), // 새해 첫날
+        new Date(currentYear, 2, 1), // 31절
+        new Date(currentYear, 4, 5), // 어린이날
+        new Date(currentYear, 5, 6), // 현충일
+        new Date(currentYear, 7, 15), // 광복절
+        new Date(currentYear, 9, 3), // 개천절
+        new Date(currentYear, 9, 9), // 한글날
+        new Date(currentYear, 11, 25), // Christmas Day
+
+        // 2023년 한정(음력및 대체)
+        new Date(currentYear, 0, 21), // 설날(D-1)
+        new Date(currentYear, 0, 22), // 설날
+        new Date(currentYear, 0, 23), // 설날(D+1)
+        new Date(currentYear, 0, 24), // 설 대체공휴일
+        new Date(currentYear, 4, 27), // 부처님 오신날
+        new Date(currentYear, 4, 29), // 석가탄신일 대체공휴일
+        new Date(currentYear, 8, 28), // 추석(D-1)
+        new Date(currentYear, 8, 29), // 추석
+        new Date(currentYear, 8, 30), // 추석(D+1)
+    ];
+
+    let workingDays = 0;
+
+    for (let day = firstDayOfMonth; day <= lastDayOfMonth; day.setDate(day.getDate() + 1)) {
+        const dayOfWeek = day.getDay();
+        if (dayOfWeek !== 0 && dayOfWeek !== 6) { // 0 is Sunday, 6 is Saturday
+            // Check if the current day is a holiday
+            if (!holidays.some(holiday => holiday.getDate() === day.getDate() && holiday.getMonth() === day.getMonth())) {
+                workingDays++;
+            }
+        }
+    }   
+   
+    return workingDays;
+}
+
+function IsThisMonthCell(cell) {
+    const month = cell.getAttribute('month');
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth() + 1;
+
+    return month == currentMonth;
+}
+
+function getDayTimeFromData(data) {
+
+    // 전일연차시 근무시간 없음
+    if (data.includes("연차")) {
+        return 0;
+    }
+
+    if (data.includes("오전") && data.includes("오후")) {
+        return 0;
+    }
+
+    const regex = /\[근로\]\s+([\d: ]+~[\d: ]+)/;
+    const match = data.match(regex);
+    if (match) {
+        const timeRange = match[1];
+        const [startTime, endTime] = timeRange.split(' ~ ');
+        const [startHour, startMinute] = startTime.split(':').map(Number);
+        const [endHour, endMinute] = endTime.split(':').map(Number);
+
+        const startMinutes = startHour * 60 + startMinute;
+        const endMinutes = endHour * 60 + endMinute;
+        const durationMinutes = endMinutes - startMinutes;
+
+        if (isNaN(durationMinutes)) {
+            return 0;
+        }
+
+        // 휴게시간 계산
+        var breakTimeMin = 60;
+        if (data.includes("오전") || data.includes("오후")) {
+
+            if (startHour == 13 && endHour == 13) {
+                breakTimeMin = 60;
+            }
+            else if (startHour < 13 && endHour >= 14) {
+                breakTimeMin = 60;
+            }
+            else if (startHour == 13) {
+                breakTimeMin = 60 - startMinute;
+            }
+            else if (endHour == 13) {
+                breakTimeMin = endMinute;
+            }
+        }
+
+        return Math.max(durationMinutes - breakTimeMin, 0);
+    } else {
+        return 0;
+    }
+}
+
+
+
+function getDayVacationMinFromData(data) {
+    // 전일연차시 근무시간 없음
+    if (data.includes("연차")) {
+        return 8 * 60;
+    }
+
+    if (data.includes("오전") && data.includes("오후")) {
+        return 8 * 60;
+    }
+
+    if (data.includes("오전") || data.includes("오후")) {
+        return 4 * 60;
+    }
+
+    return 0;
+}
+
+function getRemainDay(data) {
+    if (data.includes("연차")) {
+        return 0;
+    }
+
+    if (data.includes("오전") && data.includes("오후")) {
+        return 0;
+    }
+
+    const regex = /\[근로\]\s+([\d: ]+~[\d: ]+)/;
+    const match = data.match(regex);
+    if (match) {
+        const timeRange = match[1];
+        if (timeRange.length == 0)
+        {
+            return 0;
+        }
+        const [startTime, endTime] = timeRange.split(' ~ ');
+        if (endTime.length == 0)
+        {
+            if (data.includes("오전") || data.includes("오후")) {
+                return 0.5;
+            }
+
+            return 1;
+        }
+        
+        return 0;
+    } else {
+
+        if (data.includes("오전") || data.includes("오후")) {
+            return 0.5;
+        }
+
+        return 1;
+    }
+}
+
+function getTotalWorkingMinuteInCurrentMonth(calendarDoc) {
+    const calendarTable = calendarDoc.querySelector(".calender");
+    var totalMinute = 0;
+    for (let i = 1; i < calendarTable.rows.length; ++i) {
+        const row = calendarTable.rows[i];
+        for (let j = 0; j < 5; ++j) {
+            const cell = row.cells[j];
+            if (IsThisMonthCell(cell) == false) {
+                continue;
+            }
+            const dayData = cell.innerText;
+            const dayWorkMinute = getDayTimeFromData(dayData);
+            totalMinute = totalMinute + dayWorkMinute;
+        }
+    }
+
+    return totalMinute;
+}
+
+function getTotalVacationMinuteInCurrentMonth(calendarDoc) {
+    const calendarTable = calendarDoc.querySelector(".calender");
+    var totalMinute = 0;
+    for (let i = 1; i < calendarTable.rows.length; ++i) {
+        const row = calendarTable.rows[i];
+        for (let j = 0; j < 5; ++j) {
+            const cell = row.cells[j];
+            if (IsThisMonthCell(cell) == false) {
+                continue;
+            }
+            const dayData = cell.innerText;
+            const dayVacationMin = getDayVacationMinFromData(dayData);
+            totalMinute = totalMinute + dayVacationMin;
+        }
+    }
+
+    return totalMinute;
+}
+
+function getRemainWorkingday(calendarDoc) {
+    const calendarTable = calendarDoc.querySelector(".calender");
+    var totalRemainDay = 0;
+    for (let i = 1; i < calendarTable.rows.length; ++i) {
+        const row = calendarTable.rows[i];
+        for (let j = 0; j < 5; ++j) {
+            const cell = row.cells[j];
+            if (IsThisMonthCell(cell) == false) {
+                continue;
+            }
+            const dayData = cell.innerText;
+            const remainDay = getRemainDay(dayData);
+            totalRemainDay = totalRemainDay + remainDay;
+        }
+    }
+
+    return totalRemainDay;
+}
+
+function main() {
+    chrome.storage.local.get(['workdata'], (result) => {
+        calcWorkTime(result.workdata);
+    });
+
+    //const totalWorkMinute = await getTotalWorkingMinuteInCurrentMonth();
+    //console.log("totalWorkingMinute is %d", totalWorkMinute);
+}
+
+

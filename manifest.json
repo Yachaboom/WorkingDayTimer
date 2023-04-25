@@ -3,24 +3,26 @@
     "description": "Average work time calculator",
     "version": "0.2",
     "manifest_version": 3,
-    "content_scripts": [
-        {
-            "matches":["<all_urls>"],
-            "js": ["getInfo.js"]
-        }
-    ],
     "background": {
         "service_worker": "background.js"
     },
-
-    "action":
-    {
+    "content_scripts": [
+        {
+            "matches": ["https://*/*", "http://*/*"],
+            "js": ["dataLoad.js"]
+        }
+    ],
+    "action": {
         "default_icon": "icon.png"
     },
-
-    "permissions": ["tabs", "activeTab", "scripting", "background"],
-   
+    "permissions": [
+        "tabs",
+        "activeTab",
+        "scripting",
+        "background",
+        "storage"
+    ],
     "host_permissions": [
-      "*://gwa.oneunivrs.com//*"
+        "*://gwa.oneunivrs.com//*"
     ]
 }
