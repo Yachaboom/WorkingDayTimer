@@ -2,21 +2,37 @@
 
 main();
 
-/*async function tryLoadCalendarInfo() {
-    const calendarPageURL = "https://gwa.oneunivrs.com/yjmgames/ft/ftCalendarForm";
 
-    try {
-        const response = await fetch(calendarPageURL);
-        const text = await response.text();
-        const parser = new DOMParser();
-        const htmlDocument = parser.parseFromString(text, "text/html");
-        return htmlDocument;
-
-    } catch (error) {
-        console.error("[WorkingDatTimerError] Calendar Info Load Fail");
-        return document.implementation.createHTMLDocument('');
+function displayTimer(totalWorkRequest, totalWorkMinute, totalVacationMinute, remainWorkMinute, remainWorkingDay)
+{
+    const iframes = document.getElementsByTagName("iframe");
+    var workPlanDoc = null;
+    for(let i = 0 ; i < iframes.length ; ++i)
+    {
+        if (iframes[i].src == "https://gwa.oneunivrs.com/yjmgames/portlet/ftPortletForm")
+        {
+            workPlanDoc = iframes[i].contentDocument;
+        }
     }
-}*/
+
+    if (workPlanDoc == null)
+    {
+        console.log("test1");
+        return;
+    }
+
+    //var progresses = document.getElementsByClassName("progress-bar");
+    var workTimer = workPlanDoc.getElementsByClassName("progress-bar")[0];
+    if (workTimer)
+    {
+        workTimer.style = "width:180px;background-color: #252526;"
+    }
+
+    
+    
+    //var workTimerProgress = workTimer.querySelector("div");
+    //workTimerProgress.style = "background-color: rgb(30, 30, 30); width: 40%";
+}
 
 function calcWorkTime(data) {
     const parser = new DOMParser();
@@ -34,6 +50,9 @@ function calcWorkTime(data) {
     console.log('totalVacationMinute %d', totalVacationMinute);
     console.log('remainWorkMinute %d', remainWorkMinute);
     console.log('remainWorkingDay %d', remainWorkingDay);
+
+    displayTimer(totalWorkRequest, totalWorkMinute, totalVacationMinute, remainWorkMinute, remainWorkingDay)
+    
 }
 
 function getWorkingDaysInCurrentMonth() {
@@ -47,6 +66,7 @@ function getWorkingDaysInCurrentMonth() {
         // 고정 공휴일(양력 기준)
         new Date(currentYear, 0, 1), // 새해 첫날
         new Date(currentYear, 2, 1), // 31절
+        new Date(currentYear, 4, 1), // 노동절
         new Date(currentYear, 4, 5), // 어린이날
         new Date(currentYear, 5, 6), // 현충일
         new Date(currentYear, 7, 15), // 광복절
