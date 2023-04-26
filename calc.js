@@ -4,7 +4,7 @@ main();
 
 function convertMinToTimeText(min) {
     const hours = Math.floor(min / 60);
-    const minute = min % 60;
+    const minute = Math.round(min % 60);
     if (hours <= 0) {
         text = minute + "분";
     } else if (minute <= 0) {
@@ -28,12 +28,26 @@ function addMinutesToTime(timeString, minutesToAdd) {
 
     // Convert the updated total minutes back to hours and minutes
     const updatedHours = Math.floor(updatedTotalMinutes / 60) % 24;
-    const updatedMinutes = updatedTotalMinutes % 60;
+    const updatedMinutes = Math.round(updatedTotalMinutes % 60);
 
     // Format the result as a time string in the 'H:M' format with 2-digit minutes
     const formattedTime = `${updatedHours}:${updatedMinutes.toString().padStart(2, '0')}`;
 
     return formattedTime;
+}
+
+function onClickTest(event) {
+    console.log("onCkickTest" + event.target.textContent);
+}
+
+function onClickCome(event) {
+    console.log("onClickCome" + event.target.textContent);
+    location.reload(true);
+}
+
+function onClickLeave(event) {
+    console.log("onClickLeave" + event.target.textContent);
+    location.reload(true);
 }
 
 function displayTimer(celanderDoc, totalWorkRequest, totalWorkMinute, totalVacationMinute, remainWorkMinute, remainWorkingDay, futureHalfDay) {
@@ -48,6 +62,22 @@ function displayTimer(celanderDoc, totalWorkRequest, totalWorkMinute, totalVacat
     if (workPlanDoc == null) {
         return;
     }
+
+    // 출퇴근 버튼 이벤트 구독
+    var testButton = workPlanDoc.getElementById("otBtn");
+    if (testButton) {
+        testButton.addEventListener("click", onClickTest);
+    }    
+
+    var comeButton = workPlanDoc.getElementById("comeBtn");
+    if (comeButton) {
+        comeButton.addEventListener("click", onClickCome);
+    }   
+
+    var leaveButton = workPlanDoc.getElementById("leaveBtn");
+    if (leaveButton) {
+        leaveButton.addEventListener("click", onClickLeave);
+    }    
 
     // 의미없는 출퇴근 예상 시간 텍스트 지우고 추천 퇴근 시간 및 추천 근무 시간 넣어주기
     var oldInfoSpan = workPlanDoc.getElementById("ftStartTm");
