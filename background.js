@@ -1,3 +1,5 @@
+dataLoadTab = null;
+
 function UpdateWorkTimer(tab) {
 
     if (tab.url == "https://gwa.oneunivrs.com/gw/userMain.do") {
@@ -16,44 +18,44 @@ function WorkDataLoad(tab) {
     }
 }
 
-/*chrome.tabs.onActivated.addListener((activeInfo) => {
-    chrome.tabs.get(activeInfo.tabId, UpdateWorkTimer)
-});*/
-
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
     if (tab.url == "https://gwa.oneunivrs.com/gw/userMain.do") {
         if (changeInfo.status == "complete") {
+            dataLoadTab = null;
             chrome.tabs.get(tabId, WorkDataLoad)
         }
     }
 })
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.message === 'page_loaded') {
+    if (dataLoadTab != null, request.message === 'page_loaded' && sender.tab.id == dataLoadTab.id) {
         const workdata = request.content;
-        //chrome.storage.local.set({ workdata });
-        //console.log('Page content:', request.content);
-        // Do something with the page content
+        chrome.storage.local.set({ workdata });
         chrome.tabs.remove(sender.tab.id);
-//        const myData = { message: 'Hello from the extension!' };
-        chrome.storage.local.set({workdata});
-
         chrome.tabs.query({ url: "https://gwa.oneunivrs.com/gw/userMain.do" }, (tabs) => {
             if (tabs.length === 0) {
                 return;
             }
-            const tab = tabs[0];
-            UpdateWorkTimer(tab);
+
+            for (let i = 0 ; i < tabs.length ; ++i) {
+                UpdateWorkTimer(tabs[i]);
+            }
         });
     }
 });
 
 function openUrlAndWaitForLoad(url) {
-    chrome.tabs.create({ url: url, active: false });
+    chrome.tabs.create({ url: url, active: false }, onOpenDataTab);
 }
 
-// Example usage:
+function onOpenDataTab(tab) {
+    if (dataLoadTab != null) {
+        chrome.tabs.remove(dataLoadTab.id);
+    }
+
+    dataLoadTab = tab;
+}
 
 
 
