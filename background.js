@@ -12,15 +12,14 @@ function UpdateWorkTimer(tab) {
     }
 }
 
-function WorkDataLoad(tab) {
+function SendEnterExitState(tab) {
     if (tab.url == "https://gwa.oneunivrs.com/gw/userMain.do") {
-        openCalendarTab("https://gwa.oneunivrs.com/yjmgames/ft/ftCalendarForm");
-    }
-}
-
-function InfoDataLoad(tab) {
-    if (tab.url == "https://gwa.oneunivrs.com/gw/userMain.do") {
-        openInfoTab("https://gwa.oneunivrs.com/gw/cmm/systemx/myInfoManage.do");
+        chrome.scripting.executeScript({
+            target: {
+                tabId: tab.id
+            },
+            files: ['notion.js']
+        });
     }
 }
 
@@ -29,7 +28,6 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     if (tab.url == "https://gwa.oneunivrs.com/gw/userMain.do") {
         if (changeInfo.status == "complete") {
             calendarTab = null;
-            //chrome.tabs.get(tabId, WorkDataLoad);
             openCalendarTab("https://gwa.oneunivrs.com/yjmgames/ft/ftCalendarForm");
 
             infoTab = null;
@@ -62,8 +60,15 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         chrome.storage.local.set({ notionName, notionTeam });
         chrome.tabs.remove(sender.tab.id);
 
-        console.log(notionName);
-        console.log(notionTeam);        
+        chrome.tabs.query({ url: "https://gwa.oneunivrs.com/gw/userMain.do" }, (tabs) => {
+            if (tabs.length === 0) {
+                return;
+            }
+
+            for (let i = 0 ; i < tabs.length ; ++i) {
+                SendEnterExitState(tabs[i]);
+            }
+        });     
     }
 });
 
