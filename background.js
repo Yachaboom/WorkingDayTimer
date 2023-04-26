@@ -1,7 +1,7 @@
-dataLoadTab = null;
+calendarTab = null;
+infoTab = null;
 
 function UpdateWorkTimer(tab) {
-
     if (tab.url == "https://gwa.oneunivrs.com/gw/userMain.do") {
         chrome.scripting.executeScript({
             target: {
@@ -14,7 +14,13 @@ function UpdateWorkTimer(tab) {
 
 function WorkDataLoad(tab) {
     if (tab.url == "https://gwa.oneunivrs.com/gw/userMain.do") {
-        openUrlAndWaitForLoad("https://gwa.oneunivrs.com/yjmgames/ft/ftCalendarForm");
+        openCalendarTab("https://gwa.oneunivrs.com/yjmgames/ft/ftCalendarForm");
+    }
+}
+
+function InfoDataLoad(tab) {
+    if (tab.url == "https://gwa.oneunivrs.com/gw/userMain.do") {
+        openInfoTab("https://gwa.oneunivrs.com/gw/cmm/systemx/myInfoManage.do");
     }
 }
 
@@ -22,14 +28,18 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
     if (tab.url == "https://gwa.oneunivrs.com/gw/userMain.do") {
         if (changeInfo.status == "complete") {
-            dataLoadTab = null;
-            chrome.tabs.get(tabId, WorkDataLoad)
+            calendarTab = null;
+            //chrome.tabs.get(tabId, WorkDataLoad);
+            openCalendarTab("https://gwa.oneunivrs.com/yjmgames/ft/ftCalendarForm");
+
+            infoTab = null;
+            openInfoTab("https://gwa.oneunivrs.com/gw/cmm/systemx/myInfoManage.do");
         }
     }
 })
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (dataLoadTab != null, request.message === 'page_loaded' && sender.tab.id == dataLoadTab.id) {
+    if (calendarTab != null, request.message === 'page_loaded' && sender.tab.id == calendarTab.id) {
         const workdata = request.content;
         chrome.storage.local.set({ workdata });
         chrome.tabs.remove(sender.tab.id);
@@ -45,18 +55,40 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
 });
 
-function openUrlAndWaitForLoad(url) {
-    chrome.tabs.create({ url: url, active: false }, onOpenDataTab);
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (infoTab != null, request.message === 'info_loaded' && sender.tab.id == infoTab.id) {
+        const notionName = request.content.name;
+        const notionTeam = request.content.team;
+        chrome.storage.local.set({ notionName, notionTeam });
+        chrome.tabs.remove(sender.tab.id);
+
+        console.log(notionName);
+        console.log(notionTeam);        
+    }
+});
+
+function openCalendarTab(url) {
+    chrome.tabs.create({ url: url, active: false }, onOpenCalendarTab);
 }
 
-function onOpenDataTab(tab) {
-    if (dataLoadTab != null) {
-        chrome.tabs.remove(dataLoadTab.id);
+function onOpenCalendarTab(tab) {
+    if (calendarTab != null) {
+        chrome.tabs.remove(calendarTab.id);
     }
 
-    dataLoadTab = tab;
+    calendarTab = tab;
 }
 
+function openInfoTab(url) {
+    chrome.tabs.create({ url: url, active: false }, onOpenInfoTab);
+}
 
+function onOpenInfoTab(tab) {
+    if (infoTab != null) {
+        chrome.tabs.remove(infoTab.id);
+    }
+
+    infoTab = tab;
+}
 
 
