@@ -2,13 +2,11 @@ main();
 
 function main() {
     chrome.storage.local.get(['notionName', 'notionTeam'], (result) => {
-        checkWorkState(result.notionName, result.notionTeam);
+        checkWorkState(result.notionName, result.notionTeam, true);
     });
 }
 
-function checkWorkState(name, team) {
-    
-
+function checkWorkState(name, team, reset) {
     const iframes = document.getElementsByTagName("iframe");
     var workPlanDoc = null;
     for (let i = 0; i < iframes.length; ++i) {
@@ -35,18 +33,23 @@ function checkWorkState(name, team) {
     }
 
     chrome.storage.local.get(['workState'], (result) => {
-        if (workState != result.workState) {
-            sendNotion(name, team, workState);
+        if (workState != result.workState || reset) {
+            chrome.storage.local.set({ workState });
+            updateWorkStatus(name, team, workState);
         } else {
             console.log("same work state");
         }
     });
 }
 
-function sendNotion(name, team, workState) {
-    console.log(name);
-    console.log(team);
-    console.log(workState);
-
-    chrome.storage.local.set({ workState });
+function updateWorkStatus(name, team, status) {
+    fetch(`http://localhost:5000/workstatus/name/${name}/team/${team}/status/${status}`)
+        //fetch(`http://172.27.131.60:5000/workstatus/name/${name}/team/${team}/status/${status}`)
+        .then(responce => responce.text())
+        .then(text => {
+            console.log(text);
+        })
+        .catch(error => {
+            console.error("Error fetching page title:", error);
+        });
 }

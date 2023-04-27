@@ -23,6 +23,7 @@
         "storage"
     ],
     "host_permissions": [
-        "*://gwa.oneunivrs.com//*"
+        "*://gwa.oneunivrs.com//*",
+        "http://localhost:5000/"
     ]
 }
