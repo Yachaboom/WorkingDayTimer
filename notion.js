@@ -43,8 +43,7 @@ function checkWorkState(name, team, reset) {
 }
 
 function updateWorkStatus(name, team, status) {
-    fetch(`http://localhost:5000/workstatus/name/${name}/team/${team}/status/${status}`)
-        //fetch(`http://172.27.131.60:5000/workstatus/name/${name}/team/${team}/status/${status}`)
+    fetch(`https://192.168.0.46:5000/workstatus/name/${name}/team/${team}/status/${status}`)
         .then(responce => responce.text())
         .then(text => {
             console.log(text);

@@ -24,6 +24,6 @@
     ],
     "host_permissions": [
         "*://gwa.oneunivrs.com//*",
-        "http://localhost:5000/"
+        "https://192.168.0.46:5000/"
     ]
 }
