@@ -50,6 +50,53 @@ function onClickLeave(event) {
     location.reload(true);
 }
 
+function isWorkingDay(date) {
+    
+    const holidays = [
+        // 고정 공휴일(양력 기준)
+        new Date(date.getFullYear(), 0, 1), // 새해 첫날
+        new Date(date.getFullYear(), 2, 1), // 31절
+        new Date(date.getFullYear(), 4, 1), // 노동절
+        new Date(date.getFullYear(), 4, 5), // 어린이날
+        new Date(date.getFullYear(), 5, 6), // 현충일
+        new Date(date.getFullYear(), 7, 15), // 광복절
+        new Date(date.getFullYear(), 9, 3), // 개천절
+        new Date(date.getFullYear(), 9, 9), // 한글날
+        new Date(date.getFullYear(), 11, 25), // Christmas Day
+
+        // 2023년 한정(음력및 대체)
+        new Date(date.getFullYear(), 0, 21), // 설날(D-1)
+        new Date(date.getFullYear(), 0, 22), // 설날
+        new Date(date.getFullYear(), 0, 23), // 설날(D+1)
+        new Date(date.getFullYear(), 0, 24), // 설 대체공휴일
+        new Date(date.getFullYear(), 4, 27), // 부처님 오신날
+        new Date(date.getFullYear(), 4, 29), // 석가탄신일 대체공휴일
+        new Date(date.getFullYear(), 8, 28), // 추석(D-1)
+        new Date(date.getFullYear(), 8, 29), // 추석
+        new Date(date.getFullYear(), 8, 30), // 추석(D+1)
+    ];
+
+    const dayOfWeek = date.getDay();
+    if (dayOfWeek !== 0 && dayOfWeek !== 6) { // 0 is Sunday, 6 is Saturday
+        // Check if the current day is a holiday
+        if (!holidays.some(holiday => holiday.getDate() === date.getDate() && holiday.getMonth() === date.getMonth())) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function isWorkingDayCell(cell) {
+    const year = cell.getAttribute('year');
+    const month = cell.getAttribute('month') - 1;
+    const day = cell.getAttribute('day');
+
+    const cellDay = new Date(year, month, day);
+
+    return isWorkingDay(cellDay);
+}
+
 function displayTimer(celanderDoc, totalWorkRequest, totalWorkMinute, totalVacationMinute, remainWorkMinute, remainWorkingDay, futureHalfDay) {
     const iframes = document.getElementsByTagName("iframe");
     var workPlanDoc = null;
@@ -230,39 +277,11 @@ function getWorkingDaysInCurrentMonth() {
     const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
     const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
 
-    const holidays = [
-        // 고정 공휴일(양력 기준)
-        new Date(currentYear, 0, 1), // 새해 첫날
-        new Date(currentYear, 2, 1), // 31절
-        new Date(currentYear, 4, 1), // 노동절
-        new Date(currentYear, 4, 5), // 어린이날
-        new Date(currentYear, 5, 6), // 현충일
-        new Date(currentYear, 7, 15), // 광복절
-        new Date(currentYear, 9, 3), // 개천절
-        new Date(currentYear, 9, 9), // 한글날
-        new Date(currentYear, 11, 25), // Christmas Day
-
-        // 2023년 한정(음력및 대체)
-        new Date(currentYear, 0, 21), // 설날(D-1)
-        new Date(currentYear, 0, 22), // 설날
-        new Date(currentYear, 0, 23), // 설날(D+1)
-        new Date(currentYear, 0, 24), // 설 대체공휴일
-        new Date(currentYear, 4, 27), // 부처님 오신날
-        new Date(currentYear, 4, 29), // 석가탄신일 대체공휴일
-        new Date(currentYear, 8, 28), // 추석(D-1)
-        new Date(currentYear, 8, 29), // 추석
-        new Date(currentYear, 8, 30), // 추석(D+1)
-    ];
-
     let workingDays = 0;
 
     for (let day = firstDayOfMonth; day <= lastDayOfMonth; day.setDate(day.getDate() + 1)) {
-        const dayOfWeek = day.getDay();
-        if (dayOfWeek !== 0 && dayOfWeek !== 6) { // 0 is Sunday, 6 is Saturday
-            // Check if the current day is a holiday
-            if (!holidays.some(holiday => holiday.getDate() === day.getDate() && holiday.getMonth() === day.getMonth())) {
-                workingDays++;
-            }
+        if (isWorkingDay(day)) {
+            workingDays++;
         }
     }
 
@@ -516,6 +535,10 @@ function getRemainWorkingday(calendarDoc) {
             }
 
             if (getCellDayCompare(cell) == "past") {
+                continue;
+            }
+
+            if (isWorkingDayCell(cell) == false) {
                 continue;
             }
 
