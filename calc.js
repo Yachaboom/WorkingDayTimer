@@ -455,6 +455,7 @@ function getDayVacationMinFromData(data) {
         return 8 * 60;
     }
     else if (vacationType == "halfday") {
+        
         return 4 * 60;
     }
 
@@ -512,6 +513,9 @@ function getTotalVacationMinuteInCurrentMonth(calendarDoc) {
         for (let j = 0; j < 5; ++j) {
             const cell = row.cells[j];
             if (IsThisMonthCell(cell) == false) {
+                continue;
+            }
+            if (isWorkingDayCell(cell) == false) {
                 continue;
             }
             const dayData = cell.innerText;
