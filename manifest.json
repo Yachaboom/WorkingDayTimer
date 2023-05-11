@@ -1,7 +1,7 @@
 {
     "name": "WorkTimeCaculator",
     "description": "Average work time calculator",
-    "version": "0.3.1",
+    "version": "0.3.2",
     "manifest_version": 3,
     "background": {
         "service_worker": "background.js"
@@ -23,7 +23,6 @@
         "storage"
     ],
     "host_permissions": [
-        "*://gwa.oneunivrs.com//*",
-        "https://192.168.0.46:5000/"
+        "*://gwa.oneunivrs.com//*"
     ]
 }
