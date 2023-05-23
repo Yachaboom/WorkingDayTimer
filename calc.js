@@ -127,6 +127,7 @@ function displayTimer(celanderDoc, totalWorkRequest, totalWorkMinute, totalVacat
     }    
 
     // 의미없는 출퇴근 예상 시간 텍스트 지우고 추천 퇴근 시간 및 추천 근무 시간 넣어주기
+    var isEnter = false;
     var oldInfoSpan = workPlanDoc.getElementById("ftStartTm");
     if (oldInfoSpan) {
         var oldInfoRoot = oldInfoSpan.parentElement;
@@ -153,9 +154,27 @@ function displayTimer(celanderDoc, totalWorkRequest, totalWorkMinute, totalVacat
                 // 출근 상태
                 const recommendExitTime = addMinutesToTime(enterTime, recommendDayTime + 60);
                 recommedDayTimeText = recommedDayTimeText + "(" + recommendExitTime + ")";
+                isEnter = true;
             }
 
             recommedDayTimeText = "추천근무: " + recommedDayTimeText;
+
+            // 의미없는 시간외 신청 지우고 야근식대 신청가능 시간 정보 보여주기
+            // 단, 츨근 상태 일때만
+            if (isEnter) {
+                const dinnerTime = addMinutesToTime(enterTime, 60 * 11);
+                var dinnerTimeText = "야근식대 신청시간 : " + dinnerTime + " 이후";
+                workPlanDoc.getElementsByTagName("li")[1].innerText = "";
+
+                const recommendNewDiv = workPlanDoc.createElement("div");
+                recommendNewDiv.style.fontWeight = "bold";
+                recommendNewDiv.style.fontFamily = "Dotum";
+                recommendNewDiv.style.fontSize = 11;
+                recommendNewDiv.style.color = "#202040";
+                recommendNewDiv.textContent = dinnerTimeText;
+
+                workPlanDoc.getElementsByTagName("li")[1].appendChild(recommendNewDiv);
+            }
         }
 
         //<span id="ftStartTm" style="font-weight: bold">10:58</span>
@@ -170,6 +189,8 @@ function displayTimer(celanderDoc, totalWorkRequest, totalWorkMinute, totalVacat
             oldInfoRoot.appendChild(recommendDiv);
         }
     }
+
+    
 
     // 의미 없는 보상 표시 지워주고 정비데이 정보로 보여 주기
     var rewardSpan = workPlanDoc.getElementById("remainRwdVacCnt");
