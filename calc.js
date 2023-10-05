@@ -60,6 +60,7 @@ function isWorkingDay(date) {
         new Date(date.getFullYear(), 4, 5), // 어린이날
         new Date(date.getFullYear(), 5, 6), // 현충일
         new Date(date.getFullYear(), 7, 15), // 광복절
+        new Date(date.getFullYear(), 9, 2), // 임시공휴일
         new Date(date.getFullYear(), 9, 3), // 개천절
         new Date(date.getFullYear(), 9, 9), // 한글날
         new Date(date.getFullYear(), 11, 25), // Christmas Day
