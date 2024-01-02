@@ -60,21 +60,20 @@ function isWorkingDay(date) {
         new Date(date.getFullYear(), 4, 5), // 어린이날
         new Date(date.getFullYear(), 5, 6), // 현충일
         new Date(date.getFullYear(), 7, 15), // 광복절
-        new Date(date.getFullYear(), 9, 2), // 임시공휴일
         new Date(date.getFullYear(), 9, 3), // 개천절
         new Date(date.getFullYear(), 9, 9), // 한글날
+        new Date(date.getFullYear(), 10, 30), // 창립기념일
         new Date(date.getFullYear(), 11, 25), // Christmas Day
 
-        // 2023년 한정(음력및 대체)
-        new Date(date.getFullYear(), 0, 21), // 설날(D-1)
-        new Date(date.getFullYear(), 0, 22), // 설날
-        new Date(date.getFullYear(), 0, 23), // 설날(D+1)
-        new Date(date.getFullYear(), 0, 24), // 설 대체공휴일
-        new Date(date.getFullYear(), 4, 27), // 부처님 오신날
-        new Date(date.getFullYear(), 4, 29), // 석가탄신일 대체공휴일
-        new Date(date.getFullYear(), 8, 28), // 추석(D-1)
-        new Date(date.getFullYear(), 8, 29), // 추석
-        new Date(date.getFullYear(), 8, 30), // 추석(D+1)
+        // 2024년 한정(음력및 대체)
+        new Date(date.getFullYear(), 1, 9), // 설날(D-1)
+        new Date(date.getFullYear(), 1, 12), // 설 대체공휴일
+        new Date(date.getFullYear(), 3, 10), // 총선일
+        new Date(date.getFullYear(), 4, 6), // 어린이날 대체
+        new Date(date.getFullYear(), 4, 15), // 부처님 오신날
+        new Date(date.getFullYear(), 8, 16), // 추석(D-1)
+        new Date(date.getFullYear(), 8, 17), // 추석
+        new Date(date.getFullYear(), 8, 18), // 추석(D+1)
     ];
 
     const dayOfWeek = date.getDay();
