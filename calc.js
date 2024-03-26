@@ -360,7 +360,13 @@ function getCellVacationType(cell) {
     else if (dayData.includes("오전") && dayData.includes("오후")) {
         return "allday";
     }
-    else if (dayData.includes("오전") || dayData.includes("오후")) {
+    else if (dayData.includes("오전") && dayData.includes("기타")) {
+        return "allday";
+    }
+    else if (dayData.includes("기타") && dayData.includes("오후")) {
+        return "allday";
+    }
+    else if (dayData.includes("오전") || dayData.includes("오후") || dayData.includes("기타")) {
         return "halfday";
     }
 
