@@ -74,6 +74,7 @@ function isWorkingDay(date) {
         new Date(date.getFullYear(), 8, 16), // 추석(D-1)
         new Date(date.getFullYear(), 8, 17), // 추석
         new Date(date.getFullYear(), 8, 18), // 추석(D+1)
+        new Date(date.getFullYear(), 9, 1), // 국군의 날 임시공휴일
     ];
 
     const dayOfWeek = date.getDay();
